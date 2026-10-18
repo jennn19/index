@@ -5,89 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>今天吃什麼？- 互動美食抽籤</title>
     <style>
-        /* CSS 變數：定義主視覺色調 */
+        /* CSS 變數：升級為令人食指大動的美味暖色調 */
         :root {
-            --primary-color: #ff6b6b; /* 活潑珊瑚紅 */
-            --secondary-color: #feca57; /* 溫暖黃色 */
-            --bg-color: #f7f9fc; /* 淺灰藍背景 */
-            --text-color: #2d3436; /* 深灰文字 */
+            --primary-color: #ff4757; /* 鮮嫩蕃茄紅 */
+            --secondary-color: #ff7f50; /* 炙燒起司橙 */
+            --bg-color: #fff9f1; /* 舒服溫暖的布丁奶油色背景 */
+            --text-color: #2f3542; /* 柔和的深焦糖色文字 */
         }
 
         /* 網頁基礎佈局 */
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background-color: var(--bg-color);
+            background-image: radial-gradient(#ffeaa7 1px, transparent 1px); /* 微甜的蛋黃色圓點點綴 */
+            background-size: 20px 20px;
             color: var(--text-color);
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         /* 主卡片容器 */
         .container {
             background: white;
             padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 30px; /* 更圓潤可愛的線條 */
+            box-shadow: 0 20px 40px rgba(255, 127, 80, 0.12); /* 溫暖的橙色微光陰影 */
+            border: 2px solid #ffeaa7;
             text-align: center;
             max-width: 450px;
             width: 90%;
             transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
         }
 
         h1 {
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
+            font-weight: 900;
         }
 
         .subtitle {
-            color: #888;
+            color: #747d8c;
             margin-bottom: 2rem;
             font-size: 1rem;
+            font-weight: 500;
         }
 
         /* 輪盤結果顯示區塊 */
         .result-box {
-            background: #fff8f8;
-            border: 2px dashed var(--primary-color);
-            border-radius: 15px;
+            background: #fffdfa;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 20px;
             min-height: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 2rem;
             padding: 1rem;
+            box-shadow: inset 0 0 15px rgba(255, 127, 80, 0.03);
         }
 
         #result {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--text-color);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-color); /* 抽中的美食用美味的蕃茄紅放大顯示 */
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
             transition: all 0.1s ease;
         }
 
         /* 互動控制按鈕 */
         .action-btn {
-            background: linear-gradient(135deg, var(--primary-color), #ff4757);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1.2rem;
+            padding: 1.1rem 2.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.3);
             transition: all 0.2s ease;
             width: 100%;
+            letter-spacing: 1px;
         }
 
         /* 按鈕懸停效果 */
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(255, 107, 107, 0.6);
+            box-shadow: 0 12px 25px rgba(255, 71, 87, 0.45);
         }
 
         /* 按鈕點擊效果 */
@@ -97,15 +111,16 @@
 
         /* 按鈕禁用狀態（抽籤中） */
         .action-btn:disabled {
-            background: #ccc;
+            background: #a4b0be;
             box-shadow: none;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
         /* 滾動時美食文字的脈衝動畫 */
         .spinning {
             animation: pulse 0.1s infinite;
-            color: #ff4757 !important;
+            color: var(--secondary-color) !important;
         }
 
         @keyframes pulse {
@@ -113,9 +128,47 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        /* ========= 左右兩側固定漂浮插畫 (純 CSS 控制，100% 零當機風險) ========= */
+        .food-illustration {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 6rem;
+            user-select: none;
+            z-index: 1;
+            animation: sideFloat 3s ease-in-out infinite;
+        }
+
+        .left-illustration {
+            left: 10%;
+        }
+
+        .right-illustration {
+            right: 10%;
+            animation-delay: 1.5s;
+        }
+
+        @media (max-width: 950px) {
+            .food-illustration {
+                display: none;
+            }
+        }
+
+        @keyframes sideFloat {
+            0% { transform: translateY(-50%) translateY(0px); }
+            50% { transform: translateY(-50%) translateY(-15px); }
+            100% { transform: translateY(-50%) translateY(0px); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- 👈 左側漂浮的「大口吃飯」插畫 -->
+    <div class="food-illustration left-illustration">🍚</div>
+
+    <!-- 👉 右側漂浮的「吸溜吃麵」插畫 -->
+    <div class="food-illustration right-illustration">🍜</div>
 
     <div class="container">
         <h1>今天吃什麼？ 🍳</h1>
@@ -127,11 +180,11 @@
         </div>
 
         <!-- 控制抽籤的按鈕 -->
-        <button class="action-btn" id="spinBtn">幫我決定！</button>
+        <button class="action-btn" id="spinBtn">🔥 幫我決定！</button>
     </div>
 
     <script>
-        // 1. 內建台灣在地美食清單
+        // 原封不動的最穩固美食清單
         const foodList = [
             "滷肉飯 + 貢丸湯 🥣",
             "乾拌麵 + 燙青菜 🥢",
@@ -145,48 +198,41 @@
             "韓式炸雞 + 部隊鍋 🍗",
             "麥當勞炸雞速食 🍔",
             "雙醬厚切咖哩飯 🍛",
-            "台式夜市鐵板燒 🥩",
+            "夜市鐵板燒 🥩",
             "舒肥雞健康沙拉 🥗",
             "窯烤手工披薩 🍕"
         ];
 
-        // 2. 取得網頁上的 HTML 元素
         const resultEl = document.getElementById('result');
         const spinBtn = document.getElementById('spinBtn');
-        let isSpinning = false; // 記錄目前是否正在抽籤中
+        let isSpinning = false;
 
-        // 3. 綁定按鈕點擊事件
         spinBtn.addEventListener('click', () => {
-            if (isSpinning) return; // 如果正在抽籤，則不重複執行
+            if (isSpinning) return;
             
             isSpinning = true;
-            spinBtn.disabled = true; // 禁用按鈕
+            spinBtn.disabled = true;
             spinBtn.innerText = "正在挑選中...";
-            resultEl.classList.add('spinning'); // 加入滾動動態視覺效果
+            resultEl.classList.add('spinning');
 
             let counter = 0;
-            // 使用 setInterval 實作定時動態滾動效果
             const interval = setInterval(() => {
-                // 隨機切換清單中的美食文字
                 const randomIndex = Math.floor(Math.random() * foodList.length);
                 resultEl.innerText = foodList[randomIndex];
                 counter++;
 
-                // 滾動次數達 15 次後定格停止（約 1.2 秒）
                 if (counter > 15) { 
-                    clearInterval(interval); // 停止計時器
+                    clearInterval(interval);
                     
-                    // 計算最終隨機決定
                     const finalIndex = Math.floor(Math.random() * foodList.length);
                     resultEl.innerText = foodList[finalIndex];
                     
-                    // 恢復網頁與按鈕狀態
                     resultEl.classList.remove('spinning');
-                    spinBtn.disabled = false; // 重新啟用按鈕
+                    spinBtn.disabled = false;
                     spinBtn.innerText = "換個口味？";
                     isSpinning = false;
                 }
-            }, 80); // 每 80 毫秒滾動切換一次文字
+            }, 80);
         });
     </script>
 </body>
